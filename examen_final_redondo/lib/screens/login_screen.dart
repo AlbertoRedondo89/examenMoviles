@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../providers/auth_provider.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -41,7 +39,6 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    final authProvider = Provider.of<AuthProvider>(context);
 
     return Scaffold(
       appBar: AppBar(title: Text("Login")),
@@ -78,7 +75,7 @@ class _LoginPageState extends State<LoginPage> {
                 String username = _userController.text.trim();
                 String password = _passController.text.trim();
 
-                bool success = await authProvider.login(username, password, _rememberMe);
+                /*bool success = await authProvider.login(username, password, _rememberMe);
                 if (success) {
                   await _saveUser(username);
                   Navigator.pushReplacementNamed(context, '/home');
@@ -87,6 +84,7 @@ class _LoginPageState extends State<LoginPage> {
                     SnackBar(content: Text("Credenciales incorrectas")),
                   );
                 }
+                */
               },
               child: Text("Iniciar sesión"),
             ),

@@ -7,69 +7,67 @@ Provider de la aplicación, conecta con la API
 Obtiene las listas que necesita la aplicación.
 */
 
-class CochesPRovider extends ChangeNotifier {
+class CochesProvider extends ChangeNotifier {
   final String _baseUrl = 'cae76278bb68b7d925a9.free.beeceptor.com';
 
   List<CocheModel> cochesPrincipales = [];
   List<String> fotos = [];
 
-  CochesPRovider() {
+  CochesProvider() {
     setCoches();
-    getMealsSugeridos();
   }
 
 // Método para generar la lista principal
   setCoches() async {
-    var url =
-        Uri.https(_baseUrl, '/api/coches/');
+    var url = Uri.https(_baseUrl, '/api/coches/');
 
     final result = await http.get(url);
 
     if (result.statusCode == 200) {
-      cochesPrincipales = CocheModel.fromJson(result.body);
+      cochesPrincipales = CocheModel.fromJson(result.body) as List<CocheModel>;
       notifyListeners();
     } else {
       print('Error: ${result.statusCode}');
     }
   }
 
-  // Método para acceder a la información completa de una receta. 
-  // Recibe un String por parámetro y un bool. En función del bool, buscará el String como id o como nombre en la API.
-  Future<CocheModel> getDatosReceta(String dato, bool idNombre) async {
-    final Uri url;
-    if (idNombre) {
-      url = Uri.https(_baseUrl, '/api/json/v1/1/lookup.php', {'i': dato});
-    } else {
-      url = Uri.https(_baseUrl, '/api/json/v1/1/search.php', {'s': dato});
-    }
-    final MealReceta recetaDetalle;
-
-    final result = await http.get(url);
-    if (result.statusCode == 200) {
-      recetaDetalle = MealReceta.fromJson(result.body);
-      notifyListeners();
-    } else {
-      print('Error: ${result.statusCode}');
-      recetaDetalle = MealReceta(meals: []);
-    }
-    return recetaDetalle;
+  // añadir coche
+  addCoche(String id, String nom, String descripcio, String foto, int pueras,
+      String motor) async {
+    var url = Uri.https(_baseUrl, '/api/coches/');
+    final result = await http.post(url, body: {
+      'id': id,
+      'nom': nom,
+      'descripcio': descripcio,
+      'foto': foto,
+      'puertas': pueras,
+      'motor': motor,
+    });
   }
 
-  // Método para generar la lista de urls en función de una lista de ingredientes que recibe por parámetro. 
-  List<String> getoFotos(MealReceta receta) {
-    List<String> ingredients = [];
-    if (receta.meals.isNotEmpty) {
-      Map<String, String?> meal = receta.meals.first;
-      for (int i = 1; i <= 20; i++) {
-        String key = 'strIngredient$i';
-        if (meal.containsKey(key) &&
-            meal[key] != null &&
-            meal[key]!.isNotEmpty) {
-          ingredients.add(
-              'https://www.themealdb.com/images/ingredients/${meal[key]}!');
-        }
-      }
-    }
-    return ingredients;
+  deleteCoche(String id) async {
+    var url = Uri.https(_baseUrl, '/api/coches/$id');
+    final result = await http.delete(url);
+  }
+
+  updateCoche(String id, String nom, String descripcio, String foto, int pueras,
+      String motor) async {
+    var url = Uri.https(_baseUrl, '/api/coches/$id');
+    final result = await http.put(url, body: {
+      'id': id,
+      'nom': nom,
+      'descripcio': descripcio,
+      'foto': foto,
+      'puertas': pueras,
+      'motor': motor,
+    });
   }
 }
+
+/*
+"id": "0002",
+        "nom": "Yaris",
+        "descripcio": " Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec quis sodales tortor. Ut nec nisl at quam elementum malesuada. Etiam placerat est eu massa mollis elementum non in nibh. Aliquam ac eros varius, auctor felis a, aliquet turpis. Praesent pharetra augue vitae libero hendrerit interdum. Donec eget varius ipsum. Nulla facilisi. In eu turpis eget orci congue molestie. Aliquam eleifend ex ex, vel luctus purus vehicula ac. Donec in aliquet orci. Suspendisse consectetur feugiat ante condimentum laoreet. Aenean eu lacinia erat. Curabitur egestas non tellus et vestibulum. ",
+        "foto": "https://cdn-datak.motork.net/configurator-imgs/cars/es/original/TOYOTA/YARIS-HYBRID/44083_HATCHBACK-5-DOORS/toyota-yaris-side-view.jpg",
+        "puertas": 5,
+        "motor": "gasolina"*/
