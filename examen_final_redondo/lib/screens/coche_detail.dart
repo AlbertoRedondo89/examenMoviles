@@ -17,6 +17,7 @@ class CocheDetailScreen extends StatelessWidget {
             Text("Modelo: ${coche.nom}"),
             Text("Info: ${coche.descripcio}"),
             Text("numero de puertas: ${coche.puertas}"),
+            Image.network(coche.foto!),
           ],
         ),
       ),

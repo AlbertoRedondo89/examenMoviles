@@ -1,3 +1,4 @@
+import 'package:examen_final_redondo/preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -19,23 +20,15 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> _loadSavedUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? savedUser = prefs.getString('savedUser');
-    if (savedUser != null) {
-      _userController.text = savedUser;
+    bool? savedUser = prefs.getBool('rememberMe');
+    if (savedUser == true) {
+      _userController.text = prefs.getString('nombre')!;
       setState(() {
         _rememberMe = true;
       });
     }
   }
 
-  Future<void> _saveUser(String username) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (_rememberMe) {
-      await prefs.setString('savedUser', username);
-    } else {
-      await prefs.remove('savedUser');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +55,7 @@ class _LoginPageState extends State<LoginPage> {
                   value: _rememberMe,
                   onChanged: (value) {
                     setState(() {
-                      _rememberMe = value!;
+                      Preferences.rememberMe = value!;
                     });
                   },
                 ),
@@ -74,7 +67,7 @@ class _LoginPageState extends State<LoginPage> {
               onPressed: () async {
                 String username = _userController.text.trim();
                 String password = _passController.text.trim();
-
+                Navigator.pushNamed(context, '/home');
                 /*bool success = await authProvider.login(username, password, _rememberMe);
                 if (success) {
                   await _saveUser(username);
